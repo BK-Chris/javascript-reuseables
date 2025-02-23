@@ -1,4 +1,4 @@
-# Javascript Reuables
+# Javascript Reusables
 
 Welcome to my repository of reusable JavaScript modules! This collection is designed to help developers save time and streamline their projects by providing ready-to-use components. Hopefully, I will be adding new modules over time, so stay tuned for updates and enhancements.
 
