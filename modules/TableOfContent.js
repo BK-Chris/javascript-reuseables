@@ -52,33 +52,46 @@ export class TableOfContent {
     return Math.min(...levels);
   }
 
+  #createLiItem(textContent) {
+    const li = document.createElement("li");
+    li.className = `${this.prefix}-li`;
+    li.textContent = textContent;
+    return li;
+  }
+
+  #createList() {
+    const ul = document.createElement("ul");
+    ul.className = `${this.prefix}-ul`;
+    return ul;
+  }
+
   generateTOC() {
     this.#render();
 
-    let currentContainer = {
-      element: this.container,
-      level: this.#highestLevelHeading() - 1
-    }
+    let current = {
+      list: this.#createList(),
+      level: this.#highestLevelHeading()
+    };
+
+    this.container.appendChild(current.list);
 
     for (const heading of this.#headings) {
       let level = Number(heading.tagName.substring(1));
+      const newItem = this.#createLiItem(heading.textContent);
 
-      while (level !== currentContainer.level) {
-        if (level > currentContainer.level) {
-          const newList = document.createElement("ul");
-          newList.className = `${this.prefix}-ul`;
-
-          currentContainer.element.appendChild(newList);
-
-          currentContainer.element = newList;
-          currentContainer.level++;
-        } else if (level < currentContainer.level) {
-          currentContainer.element = currentContainer.element.parentElement;
-          currentContainer.level--;
+      if (level > current.level) {
+        const subList = this.#createList();
+        current.list.lastElementChild?.appendChild(subList);
+        current.list = subList;
+        current.level = level;
+      } else if (level < current.level) {
+        while (current.level > level) {
+          current.list = current.list.parentElement.closest("ul");
+          current.level--;
         }
       }
-      currentContainer.element.innerHTML +=
-        `<li class="${this.prefix}-li">${heading.textContent}</li>`;
+
+      current.list.appendChild(newItem);
     }
   }
 
